@@ -49,7 +49,7 @@ class _RidePrefScreenState extends State<RidePrefScreen> {
             Container(
               margin: EdgeInsets.symmetric(horizontal: BlaSpacings.xxl),
               decoration: BoxDecoration(
-                color: Colors.white, // White background
+                //color: Colors.white, // White background
                 borderRadius: BorderRadius.circular(16), // Rounded corners
               ),
               child: Column(

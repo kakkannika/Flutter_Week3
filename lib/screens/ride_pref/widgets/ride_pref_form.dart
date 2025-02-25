@@ -1,3 +1,4 @@
+import 'package:week_3_blabla_project/screens/file_location_picker.dart';
 import 'package:week_3_blabla_project/widgets/bla_button.dart';
 
 import '../../../theme/theme.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../../../model/ride/locations.dart';
 import '../../../model/ride_pref/ride_pref.dart';
+import '../../../widgets/../widgets/display/bla_divider.dart';
 
 ///
 /// A Ride Preference From is a view to select:
@@ -39,6 +41,28 @@ class _RidePrefFormState extends State<RidePrefForm> {
     departureDate = widget.initRidePref?.departureDate ?? DateTime.now();
     requestedSeats = widget.initRidePref?.requestedSeats ?? 1;
   }
+  Future<void> _selectLocation(bool isDeparture) async {
+  final location = await Navigator.push<Location>(
+    context,
+    MaterialPageRoute(
+      builder: (context) => LocationPickerScreen(
+        title: isDeparture ? 'Select Departure' : 'Select Arrival',
+        initialLocation: isDeparture ? departure : arrival,
+      ),
+    ),
+  );
+
+  if (location != null) {
+    setState(() {
+      if (isDeparture) {
+        departure = location;
+      } else {
+        arrival = location;
+      }
+    });
+  }
+ }
+
 
   void _switchLocations() {
     setState(() {
@@ -91,34 +115,48 @@ class _RidePrefFormState extends State<RidePrefForm> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Departure Location
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
+          // Departure Location
+            InkWell( 
+              onTap: () => _selectLocation(true),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.circle_outlined, color: Colors.black54),
-                  SizedBox(width: 10),
-                  Text(departure?.name ?? "Select Departure", style: TextStyle(fontSize: 16)),
+                  Row(
+                    children: [
+                      Icon(Icons.radio_button_unchecked),
+                      SizedBox(width: BlaSpacings.s),
+                      Text(
+                          departure?.name ?? "Select Departure",
+                          style: BlaTextStyles.body,
+                        ),
+                    ],
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.swap_vert, color: BlaColors.primary),
+                    onPressed: () {
+                      _switchLocations();
+                    },
+                  ),
                 ],
               ),
-              IconButton(
-                icon: const Icon(Icons.swap_vert, color: Colors.blue),
-                onPressed: _switchLocations,
-              ),
-            ],
-          ),
-          const Divider(),
+            ),
 
-          // Arrival Location
-          Row(
-            children: [
-              Icon(Icons.radio_button_unchecked, color: Colors.black54),
-              SizedBox(width: 10),
-              Text(arrival?.name ?? "Select Arrival", style: TextStyle(fontSize: 16)),
-            ],
-          ),
-          const Divider(),
-
+            BlaDivider(),
+            SizedBox(height: BlaSpacings.s),
+            // Arrival Location
+            InkWell(
+              onTap: () => _selectLocation(false),
+              child: Row(
+              children: [
+                Icon(Icons.radio_button_unchecked),
+                SizedBox(width: 10),
+                Text(arrival?.name ?? "Select Arrival",
+                    style: BlaTextStyles.body,),
+              ],
+            ),
+            ),
+            SizedBox(height: BlaSpacings.s),
+            BlaDivider(),
           // Date
           Row(
             children: [

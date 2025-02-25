@@ -28,7 +28,7 @@ class BlaButton extends StatelessWidget {
       label: Text(label, style: textStyle),
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
-        
+      
       ),
       onPressed: onPressed,
     );

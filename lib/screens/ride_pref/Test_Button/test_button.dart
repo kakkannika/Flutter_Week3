@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:week_3_blabla_project/widgets/bla_button.dart';
 
@@ -15,8 +16,8 @@ class TestBlaButtonScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: BlaButton(
-                label: 'Request Chating',
-                icon: Icons.book,
+                label: 'Request Chating ',
+                icon: Icons.chat_bubble,
                 isPrimary: true,
                 hasIcon: true,
                 color: Colors.blue,

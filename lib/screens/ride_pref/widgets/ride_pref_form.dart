@@ -1,10 +1,11 @@
+import 'package:week_3_blabla_project/widgets/bla_button.dart';
+
 import '../../../theme/theme.dart';
-import '../../../widgets/bal_button.dart';
 import 'package:flutter/material.dart';
- 
+
 import '../../../model/ride/locations.dart';
 import '../../../model/ride_pref/ride_pref.dart';
- 
+
 ///
 /// A Ride Preference From is a view to select:
 ///   - A depcarture location
@@ -30,48 +31,61 @@ class _RidePrefFormState extends State<RidePrefForm> {
   Location? arrival;
   late int requestedSeats;
 
-
-
-  // ----------------------------------
-  // Initialize the Form attributes
-  // ----------------------------------
-
   @override
   void initState() {
     super.initState();
-    // TODO 
+    departure = widget.initRidePref?.departure;
+    arrival = widget.initRidePref?.arrival;
+    departureDate = widget.initRidePref?.departureDate ?? DateTime.now();
+    requestedSeats = widget.initRidePref?.requestedSeats ?? 1;
   }
 
-  // ----------------------------------
-  // Handle events
-  // ----------------------------------
- 
+  void _switchLocations() {
+    setState(() {
+      final temp = departure;
+      departure = arrival;
+      arrival = temp;
+    });
+  }
 
-  // ----------------------------------
-  // Compute the widgets rendering
-  // ----------------------------------
-  
+  bool _isFormValid() {
+    return departure != null && arrival != null && requestedSeats > 0;
+  }
 
-  // ----------------------------------
-  // Build the widgets
-  // ----------------------------------
+  void _onSearchPressed() {
+    if (_isFormValid()) {
+      final ridePref = RidePref(
+        departure: departure!,
+        arrival: arrival!,
+        departureDate: departureDate,
+        requestedSeats: requestedSeats,
+      );
+      Navigator.pop(context, ridePref);
+    } else {
+      // Show an error message or handle invalid form state
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please fill all the fields')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-    margin: EdgeInsets.all(BlaSpacings.m),
-    padding: EdgeInsets.all(BlaSpacings.m),
-    decoration: BoxDecoration(
-      color: BlaColors.white,
-      borderRadius: BorderRadius.circular(BlaSpacings.radius),
-      boxShadow: [
-        BoxShadow(
-          color: BlaColors.neutralLight.withOpacity(0.1),
-          spreadRadius: 0,
-          blurRadius: 8,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+      margin: EdgeInsets.all(BlaSpacings.m),
+      padding: EdgeInsets.all(BlaSpacings.m),
+      decoration: BoxDecoration(
+        color: BlaColors.white,
+        borderRadius: BorderRadius.circular(BlaSpacings.radius),
+        boxShadow: [
+          BoxShadow(
+            color: BlaColors.neutralLight.withOpacity(0.1),
+            spreadRadius: 0,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -80,47 +94,47 @@ class _RidePrefFormState extends State<RidePrefForm> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Row(
+              Row(
                 children: [
                   Icon(Icons.circle_outlined, color: Colors.black54),
                   SizedBox(width: 10),
-                  Text("Toulouse", style: TextStyle(fontSize: 16)),
+                  Text(departure?.name ?? "Select Departure", style: TextStyle(fontSize: 16)),
                 ],
               ),
               IconButton(
                 icon: const Icon(Icons.swap_vert, color: Colors.blue),
-                onPressed: () {},
+                onPressed: _switchLocations,
               ),
             ],
           ),
           const Divider(),
 
           // Arrival Location
-          const Row(
+          Row(
             children: [
               Icon(Icons.radio_button_unchecked, color: Colors.black54),
               SizedBox(width: 10),
-              Text("Bordeaux, France", style: TextStyle(fontSize: 16)),
+              Text(arrival?.name ?? "Select Arrival", style: TextStyle(fontSize: 16)),
             ],
           ),
           const Divider(),
 
           // Date
-          const Row(
+          Row(
             children: [
               Icon(Icons.calendar_today, color: Colors.black54),
               SizedBox(width: 10),
-              Text("Sat 22 Feb", style: TextStyle(fontSize: 16)),
+              Text(departureDate.toLocal().toString().split(' ')[0], style: TextStyle(fontSize: 16)),
             ],
           ),
           const Divider(),
 
           // Number of Seats
-          const Row(
+          Row(
             children: [
               Icon(Icons.person, color: Colors.black54),
               SizedBox(width: 10),
-              Text("1", style: TextStyle(fontSize: 16)),
+              Text(requestedSeats.toString(), style: TextStyle(fontSize: 16)),
             ],
           ),
           const SizedBox(height: 20),
@@ -129,11 +143,17 @@ class _RidePrefFormState extends State<RidePrefForm> {
           SizedBox(
             width: double.infinity,
             child: BlaButton(
-              label: "Search", 
-              isPrimary : true, 
+              label: "Search",
+              icon: Icons.search,
+              isPrimary: true,
               hasIcon: false,
-               onPressed: () {}
-               ),
+              color: Colors.blue,
+              textStyle: TextStyle(color: Colors.black, fontSize: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              onPressed: _onSearchPressed,
+            ),
           ),
         ],
       ),
